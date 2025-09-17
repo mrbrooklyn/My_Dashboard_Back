@@ -1,8 +1,10 @@
+"use strict";
+
 const mongoose = require("mongoose");
 
 async function connectDB() {
   try {
-    const connection = process.env.DB_MONGO_CONNECTION_STRING + "/" + process.env.DB_NAME
+    const connection = process.env.DB_MONGO_CONNECTION_STRING + "/" + process.env.DB_NAME;
     await mongoose.connect(connection, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
