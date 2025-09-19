@@ -15,13 +15,13 @@ const init = async () => {
   server = Hapi.server({
     host: process.env.HOST || "localhost",
     port: process.env.PORT || 3000,
-    // routes: {
-    //   cors: {
-    //     origin: ['http://localhost:3000','http://localhost:3001'],
-    //     headers: ['Accept', 'Content-Type', 'Authorization', 'appid', 'platform', 'sign', 'timestamp'],
-    //     credentials: true,
-    //   },
-    // },
+    routes: {
+      cors: {
+        origin: ['http://localhost:3000'],
+        headers: ['Accept', 'Content-Type', 'Authorization', 'appid', 'platform', 'sign', 'timestamp'],
+        credentials: true,
+      },
+    },
   });
 
   await server.register(Jwt);
