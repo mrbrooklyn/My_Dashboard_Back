@@ -3,6 +3,7 @@ const UserSchema = require("../schema/user");
 const ServiceResponse = require("../schema/service");
 const AuthUtil = require("../lib/auth");
 const Util = require("../lib/utility");
+const { ERRORS } = require("../constants/custom-errors.js");
 
 module.exports = [
   {
@@ -97,7 +98,7 @@ module.exports = [
         serviceRes.data = user;
         return h.response(serviceRes).code(200);
       } else {
-        serviceRes = ServiceResponse.customCode(40001, `User not found by header token`);
+        serviceRes = ServiceResponse.customCode(ERRORS.USER_NOT_FOUND_IN_HEADER.code, ERRORS.USER_NOT_FOUND_IN_HEADER.message);
         return h.response(serviceRes).code(200);
       }
     },

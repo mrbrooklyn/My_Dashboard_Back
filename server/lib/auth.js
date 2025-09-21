@@ -1,6 +1,7 @@
 const Util = require("./utility");
 const AuthToken = require("../models/auth-token");
 const User = require("../models/user");
+const { ERRORS } = require("../constants/custom-errors.js");
 
 const methods = {};
 
@@ -20,7 +21,7 @@ methods.refreshToken = async (expiredToken) => {
   });
 
   if (!authTokenData) {
-    return { status: 30001, message: "Invalid current token to refresh" };
+    return { status: ERRORS.INVALID_TOKEN.code, message: ERRORS.INVALID_TOKEN.message };
   }
 
   let user = await User.findOne({
@@ -28,7 +29,7 @@ methods.refreshToken = async (expiredToken) => {
   });
 
   if (!user) {
-    return { status: 30002, message: `User not found` };
+    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
   }
 
   let newToken = Util.tokenSign(user.getObjectId(), "1h");

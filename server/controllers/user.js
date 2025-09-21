@@ -3,24 +3,30 @@ const User = require("../models/user");
 const AuthToken = require("../models/auth-token");
 const Util = require("../lib/utility");
 const AuthUtil = require("../lib/auth");
+const crypto = require("crypto");
+const { ERRORS } = require("../constants/custom-errors.js");
 
 exports.register = async (payload) => {
   const existingUser = await User.findOne({ email: payload.email }).lean();
 
   if (existingUser) {
-    return { status: 10001, message: "User already exists" };
+    return { status: ERRORS.USER_ALREADY_EXISTS.code, message: ERRORS.USER_ALREADY_EXISTS.message };
   }
 
   const checkPassword = AuthUtil.isValidPassword(payload.password ?? null);
   if (!checkPassword) {
-    return { status: 10002, message: "Password format is invalid" };
+    return { status: ERRORS.INVALID_PASSWORD.code, message: ERRORS.INVALID_PASSWORD.message };
   }
 
   const hashedPassword = await Util.hash(payload.password);
 
+  const randomSuffix = crypto.randomBytes(3).toString("hex");
+  const defaultFirstName = "Guest";
+  const defaultLastName = `User_${randomSuffix}`;
+
   const user = new User({
-    first_name: payload.first_name,
-    last_name: payload.last_name,
+    first_name: payload.first_name || defaultFirstName,
+    last_name: payload.last_name || defaultLastName,
     phone: payload.phone,
     email: payload.email,
     password: hashedPassword,
@@ -29,7 +35,7 @@ exports.register = async (payload) => {
   let registerUser = await user.save();
 
   if (!registerUser) {
-    return { status: 10003, message: "Create user with password failed" };
+    return { status: ERRORS.REGISTER_FAILED.code, message: ERRORS.REGISTER_FAILED.message };
   }
 
   let token = Util.tokenSign(registerUser.getObjectId(), "1h");
@@ -46,17 +52,17 @@ exports.login = async (payload) => {
   const existingUser = await User.findOne({ email: payload.email });
 
   if (!existingUser) {
-    return { status: 20001, message: "User not found" };
+    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
   }
 
   if (!payload.password || !existingUser.password) {
-    return { status: 20002, message: "invalid user data" };
+    return { status: ERRORS.INVALID_USER.code, message: ERRORS.INVALID_USER.message };
   }
 
   const matchedPassword = await Util.compare(payload.password, existingUser.password);
   
   if (!matchedPassword) {
-    return { status: 20003, message: "Invalid password, please try again." };
+    return { status: ERRORS.PASSWORD_NOT_MATCH.code, message: ERRORS.PASSWORD_NOT_MATCH.message };
   }
 
   let token = Util.tokenSign(existingUser.getObjectId(), "1h");
