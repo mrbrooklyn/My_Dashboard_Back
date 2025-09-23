@@ -1,4 +1,7 @@
 export const ERRORS = {
+  INVALID_RESPONSE: 
+  { code: 10000, message: "Something went wrong," },
+
   USER_ALREADY_EXISTS: 
   { code: 10001, message: "User already exists." },
 
@@ -22,5 +25,17 @@ export const ERRORS = {
 
   USER_NOT_FOUND_IN_HEADER: 
   { code: 10008, message: "User not found by header token" },
+  
+  PASSWORD_DUPLICATED: 
+  { code: 10009, message: "Cannot used the same password" },
+  
+  INVALID_PASSWORD: 
+  { code: 10010, message: "Invalid password" },
+
+  INVALID_OLD_PASSWORD: 
+  { code: 10011, message: "Invalid old password" },
+  
+  INVALID_PAYLOAD: 
+  { code: 10012, message: "Invalid payload" },
 
 };

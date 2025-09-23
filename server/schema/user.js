@@ -17,8 +17,22 @@ const refreshToken = Joi.object({
   token: Joi.string().required(),
 });
 
+const resetPassword = Joi.object({
+  old_password: Joi.string().required(),
+  new_password: Joi.string().required(),
+});
+
+const updateUser = Joi.object({
+  // email: Joi.string().allow("").example("lorem").default(null),
+  first_name: Joi.string().allow("").example("lorem").default(null),
+  last_name: Joi.string().allow("").example("ipsum").default(null),
+  phone: Joi.string().regex(/^\d+$/).min(8).max(12).trim().allow('').example('0123456789').default(null),
+});
+
 module.exports = {
   register,
   login,
   refreshToken,
+  resetPassword,
+  updateUser,
 };

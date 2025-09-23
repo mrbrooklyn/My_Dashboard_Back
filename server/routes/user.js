@@ -10,6 +10,7 @@ module.exports = [
     method: "POST",
     path: "/auth/register",
     options: {
+      auth: false,
       description: "Register new user",
       validate: {
         payload: UserSchema.register,
@@ -17,9 +18,7 @@ module.exports = [
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
-      let { status, data, message } = await UserController.register(
-        request.payload
-      );
+      let { status, data, message } = await UserController.register(request.payload);
 
       if (status === 200) {
         serviceRes.data = data;
@@ -35,6 +34,7 @@ module.exports = [
     method: "POST",
     path: "/auth/login",
     options: {
+      auth: false,
       description: "Login user",
       validate: {
         payload: UserSchema.login,
@@ -42,9 +42,7 @@ module.exports = [
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
-      let { status, data, message } = await UserController.login(
-        request.payload
-      );
+      let { status, data, message } = await UserController.login(request.payload);
 
       if (status === 200) {
         serviceRes.data = data;
@@ -83,12 +81,13 @@ module.exports = [
   },
   {
     method: "GET",
-    path: "/users/me",
+    path: "/users/profile",
     options: {
       auth: {
         strategy: "jwt",
       },
-      description: "Get user profile by current access-token (Need access-token in header)",
+      description:
+        "Get user profile by current access-token (Need access-token in header)",
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
@@ -98,7 +97,64 @@ module.exports = [
         serviceRes.data = user;
         return h.response(serviceRes).code(200);
       } else {
-        serviceRes = ServiceResponse.customCode(ERRORS.USER_NOT_FOUND_IN_HEADER.code, ERRORS.USER_NOT_FOUND_IN_HEADER.message);
+        serviceRes = ServiceResponse.customCode(
+          ERRORS.USER_NOT_FOUND_IN_HEADER.code,
+          ERRORS.USER_NOT_FOUND_IN_HEADER.message
+        );
+        return h.response(serviceRes).code(200);
+      }
+    },
+  },
+  {
+    method: "POST",
+    path: "/auth/reset-password",
+    options: {
+      auth: {
+        strategy: "jwt",
+      },
+      description: "Reset password",
+      validate: {
+        payload: UserSchema.resetPassword,
+      },
+    },
+    handler: async (request, h) => {
+      let serviceRes = ServiceResponse.success();
+      let userId = request.auth.credentials._id;
+      let { status, data, message } = await UserController.resetPassword(userId, request.payload);
+
+      if (status === 200) {
+        serviceRes.data = data;
+        serviceRes.message = message;
+        return h.response(serviceRes).code(200);
+      } else {
+        serviceRes = ServiceResponse.customCode(status, message);
+        return h.response(serviceRes).code(200);
+      }
+    },
+  },
+  {
+    method: "PUT",
+    path: "/users/profile",
+    options: {
+      auth: {
+        strategy: "jwt",
+      },
+      description: "Update user profile",
+      validate: {
+        payload: UserSchema.updateUser,
+      },
+    },
+    handler: async (request, h) => {
+      let serviceRes = ServiceResponse.success();
+      let userId = request.auth.credentials._id;
+      let { status, data, message } = await UserController.updateProfile(userId, request.payload);
+
+      if (status === 200) {
+        serviceRes.data = data;
+        serviceRes.message = message;
+        return h.response(serviceRes).code(200);
+      } else {
+        serviceRes = ServiceResponse.customCode(status, message);
         return h.response(serviceRes).code(200);
       }
     },

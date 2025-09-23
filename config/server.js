@@ -6,6 +6,7 @@ const Jwt = require("hapi-auth-jwt2");
 const Boom = require("@hapi/boom");
 const userRoutes = require("../server/routes/user");
 const AuthToken = require("../server/models/auth-token");
+const User = require("../server/models/user");
 
 let server;
 
@@ -26,9 +27,13 @@ const init = async () => {
 
   await server.register(Jwt);
 
-  const validate = async (decoded, r, h) => {
-    let isValid = true;
-    return { isValid, credentials: decoded };
+  const validate = async (decoded, request, h) => {
+    const user = await User.findById(decoded._id).lean();
+    if (!user) {
+      return { isValid: false };
+    }
+
+    return { isValid: true, credentials: decoded };
   };
 
   server.auth.strategy("jwt", "jwt", {
