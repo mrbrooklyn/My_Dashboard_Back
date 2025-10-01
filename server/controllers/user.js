@@ -4,18 +4,17 @@ const AuthToken = require("../models/auth-token");
 const Util = require("../lib/utility");
 const AuthUtil = require("../lib/auth");
 const crypto = require("crypto");
-const { ERRORS } = require("../constants/custom-errors.js");
 
-exports.register = async (payload) => {
+exports.register = async (lang, payload) => {
   const existingUser = await User.findOne({ email: payload.email }).lean();
 
   if (existingUser) {
-    return { status: ERRORS.USER_ALREADY_EXISTS.code, message: ERRORS.USER_ALREADY_EXISTS.message };
+    return Util.customError(lang, "USER_ALREADY_EXISTS");
   }
 
   const checkPassword = AuthUtil.isValidPassword(payload.password ?? null);
   if (!checkPassword) {
-    return { status: ERRORS.INVALID_PASSWORD.code, message: ERRORS.INVALID_PASSWORD.message };
+    return Util.customError(lang, "INVALID_PASSWORD");
   }
 
   const hashedPassword = await Util.hash(payload.password);
@@ -35,7 +34,7 @@ exports.register = async (payload) => {
   let registerUser = await user.save();
 
   if (!registerUser) {
-    return { status: ERRORS.REGISTER_FAILED.code, message: ERRORS.REGISTER_FAILED.message };
+    return Util.customError(lang, "REGISTER_FAILED");
   }
 
   let token = Util.tokenSign(registerUser.getObjectId(), "1h");
@@ -48,21 +47,21 @@ exports.register = async (payload) => {
   return { status: 200, data: { user: await registerUser.response(), access_token: token }, message: "User registered successfully" };
 };
 
-exports.login = async (payload) => {
+exports.login = async (lang, payload) => {
   const existingUser = await User.findOne({ email: payload.email });
 
   if (!existingUser) {
-    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
+    return Util.customError(lang, "USER_NOT_FOUND");
   }
 
   if (!payload.password || !existingUser.password) {
-    return { status: ERRORS.INVALID_USER.code, message: ERRORS.INVALID_USER.message };
+    return Util.customError(lang, "INVALID_USER");
   }
 
   const matchedPassword = await Util.compare(payload.password, existingUser.password);
   
   if (!matchedPassword) {
-    return { status: ERRORS.PASSWORD_NOT_MATCH.code, message: ERRORS.PASSWORD_NOT_MATCH.message };
+    return Util.customError(lang, "PASSWORD_NOT_MATCH");
   }
 
   let token = Util.tokenSign(existingUser.getObjectId(), "1h");
@@ -88,29 +87,29 @@ exports.login = async (payload) => {
   return { status: 200, data: { user: await existingUser.response(), access_token: token }, message: "User login successfully" };
 };
 
-exports.resetPassword = async (userId, payload) => {
+exports.resetPassword = async (lang, userId, payload) => {
   if (!payload.new_password && !payload.old_password) {
-    return { status: ERRORS.INVALID_PAYLOAD.code, message: ERRORS.INVALID_PAYLOAD.message };
+    return Util.customError(lang, "INVALID_PAYLOAD");
   }
 
   const existingUser = await User.findOne({ _id: userId });
   if (!existingUser) {
-    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
+    return Util.customError(lang, "USER_NOT_FOUND");
   }
 
   const checkOldPassword = await Util.compare(payload.old_password, existingUser.password);
   if (!checkOldPassword) {
-    return { status: ERRORS.INVALID_OLD_PASSWORD.code, message: ERRORS.INVALID_OLD_PASSWORD.message,};
+    return Util.customError(lang, "INVALID_OLD_PASSWORD");
   }
 
   const checkNewPassword = AuthUtil.isValidPassword(payload.new_password ?? null);
   if (!checkNewPassword) {
-    return { status: ERRORS.INVALID_PASSWORD.code, message: ERRORS.INVALID_PASSWORD.message };
+    return Util.customError(lang, "INVALID_PASSWORD");
   }
 
   const isSameOldPassword = await Util.compare(payload.new_password, existingUser.password);
   if (isSameOldPassword) {
-    return { status: ERRORS.PASSWORD_DUPLICATED.code, message: ERRORS.PASSWORD_DUPLICATED.message,};
+    return Util.customError(lang, "PASSWORD_DUPLICATED");
   }
 
   const hashedPassword = await Util.hash(payload.new_password);
@@ -119,7 +118,7 @@ exports.resetPassword = async (userId, payload) => {
   const savedUser = await existingUser.save();
 
   if (!savedUser) {
-    return { status: ERRORS.INVALID_RESPONSE.code, message: ERRORS.INVALID_RESPONSE.message };
+    return Util.customError(lang, "INVALID_RESPONSE");
   }
 
   let token = Util.tokenSign(savedUser.getObjectId(), "1h");
@@ -132,14 +131,14 @@ exports.resetPassword = async (userId, payload) => {
   return { status: 200, data: { user: await savedUser.response(), access_token: token }, message: "Change password successfully" };
 };
 
-exports.updateProfile = async (userId, payload) => {
+exports.updateProfile = async (lang, userId, payload) => {
   if(!payload.first_name && !payload.last_name && !payload.phone)  {
-    return { status: ERRORS.INVALID_PAYLOAD.code, message: ERRORS.INVALID_PAYLOAD.message };
+    return Util.customError(lang, "INVALID_PAYLOAD");
   }
 
   const existingUser = await User.findOne({ _id: userId });
   if (!existingUser) {
-    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
+    return Util.customError(lang, "USER_NOT_FOUND");
   }
 
   // if(payload.email) {
@@ -158,7 +157,7 @@ exports.updateProfile = async (userId, payload) => {
   const savedUser = await existingUser.save();
 
   if (!savedUser) {
-    return { status: ERRORS.INVALID_RESPONSE.code, message: ERRORS.INVALID_RESPONSE.message };
+    return Util.customError(lang, "INVALID_RESPONSE");
   }
 
   let token = Util.tokenSign(savedUser.getObjectId(), "1h");

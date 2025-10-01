@@ -19,7 +19,7 @@ const init = async () => {
     routes: {
       cors: {
         origin: ['http://localhost:3000'],
-        headers: ['Accept', 'Content-Type', 'Authorization', 'appid', 'platform', 'sign', 'timestamp'],
+        headers: ['Accept', 'Content-Type', 'Authorization', 'platform', 'lang'],
         credentials: true,
       },
     },
@@ -43,7 +43,8 @@ const init = async () => {
   });
 
   server.ext("onRequest", async (r, h) => {
-
+    r.lang = r.headers["lang"] || "en";
+    
     return h.continue;
   });
 

@@ -15,13 +15,13 @@ methods.isValidPassword = (credential) => {
   return isMorethanEightCharacter && isContainCharacter && isContainNumber;
 };
 
-methods.refreshToken = async (expiredToken) => {
+methods.refreshToken = async (lang, expiredToken) => {
   let authTokenData = await AuthToken.findOne({
     access_tokens: expiredToken,
   });
 
   if (!authTokenData) {
-    return { status: ERRORS.INVALID_TOKEN.code, message: ERRORS.INVALID_TOKEN.message };
+    return Util.customError(lang, "INVALID_TOKEN");
   }
 
   let user = await User.findOne({
@@ -29,7 +29,7 @@ methods.refreshToken = async (expiredToken) => {
   });
 
   if (!user) {
-    return { status: ERRORS.USER_NOT_FOUND.code, message: ERRORS.USER_NOT_FOUND.message };
+    return Util.customError(lang, "USER_NOT_FOUND");
   }
 
   let newToken = Util.tokenSign(user.getObjectId(), "1h");

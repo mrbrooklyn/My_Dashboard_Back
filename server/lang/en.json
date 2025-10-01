@@ -1,0 +1,14 @@
+{
+  "INVALID_RESPONSE": "Something went wrong",
+  "USER_ALREADY_EXISTS": "User already exists.",
+  "INVALID_PASSWORD": "Password must be at least 8 characters long and include at least one letter and one number.",
+  "REGISTER_FAILED": "Create user with password failed",
+  "USER_NOT_FOUND": "User not found",
+  "INVALID_USER": "Invalid user data",
+  "PASSWORD_NOT_MATCH": "Invalid password, please try again.",
+  "INVALID_TOKEN": "Invalid current token to refresh",
+  "USER_NOT_FOUND_IN_HEADER": "User not found by header token",
+  "PASSWORD_DUPLICATED": "Cannot use the same password",
+  "INVALID_OLD_PASSWORD": "Invalid old password",
+  "INVALID_PAYLOAD": "Invalid payload"
+}

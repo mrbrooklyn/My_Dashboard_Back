@@ -18,7 +18,7 @@ module.exports = [
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
-      let { status, data, message } = await UserController.register(request.payload);
+      let { status, data, message } = await UserController.register(request.lang, request.payload);
 
       if (status === 200) {
         serviceRes.data = data;
@@ -42,7 +42,7 @@ module.exports = [
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
-      let { status, data, message } = await UserController.login(request.payload);
+      let { status, data, message } = await UserController.login(request.lang, request.payload);
 
       if (status === 200) {
         serviceRes.data = data;
@@ -67,7 +67,7 @@ module.exports = [
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
       const token = request.payload.token;
-      let { status, data, message } = await AuthUtil.refreshToken(token);
+      let { status, data, message } = await AuthUtil.refreshToken(request.lang, token);
 
       if (status === 200) {
         serviceRes.data = { access_token: data };
@@ -86,8 +86,7 @@ module.exports = [
       auth: {
         strategy: "jwt",
       },
-      description:
-        "Get user profile by current access-token (Need access-token in header)",
+      description: "Get user profile by current access-token (Need access-token in header)",
     },
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
@@ -97,10 +96,7 @@ module.exports = [
         serviceRes.data = user;
         return h.response(serviceRes).code(200);
       } else {
-        serviceRes = ServiceResponse.customCode(
-          ERRORS.USER_NOT_FOUND_IN_HEADER.code,
-          ERRORS.USER_NOT_FOUND_IN_HEADER.message
-        );
+        serviceRes = ServiceResponse.customCode(ERRORS.USER_NOT_FOUND_IN_HEADER, Util.t(request.lang, "USER_NOT_FOUND_IN_HEADER"));
         return h.response(serviceRes).code(200);
       }
     },
@@ -120,7 +116,7 @@ module.exports = [
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
       let userId = request.auth.credentials._id;
-      let { status, data, message } = await UserController.resetPassword(userId, request.payload);
+      let { status, data, message } = await UserController.resetPassword(request.lang, userId, request.payload);
 
       if (status === 200) {
         serviceRes.data = data;
@@ -147,7 +143,7 @@ module.exports = [
     handler: async (request, h) => {
       let serviceRes = ServiceResponse.success();
       let userId = request.auth.credentials._id;
-      let { status, data, message } = await UserController.updateProfile(userId, request.payload);
+      let { status, data, message } = await UserController.updateProfile(request.lang, userId, request.payload);
 
       if (status === 200) {
         serviceRes.data = data;

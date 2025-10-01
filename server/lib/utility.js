@@ -2,6 +2,9 @@ const Bcrypt = require("bcryptjs");
 const JWT = require("jsonwebtoken");
 const AuthToken = require("../models/auth-token");
 const User = require("../models/user");
+const { ERRORS } = require("../constants/custom-errors.js");
+const en = require("../lang/en.json");
+const th = require("../lang/th.json");
 
 const saltRounds = 10;
 
@@ -64,6 +67,18 @@ methods.findUser = async (request) => {
     }
   }
   return user ? user : null;
+};
+
+methods.t = (lang, key) => {
+  const messages = lang === "th" ? th : en;
+  return messages[key] || key;
+};
+
+methods.customError = (lang, codeKey) => {
+  return {
+    status: ERRORS[codeKey],
+    message: methods.t(lang, codeKey),
+  };
 };
 
 module.exports = methods;

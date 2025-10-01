@@ -1,41 +1,15 @@
 export const ERRORS = {
-  INVALID_RESPONSE: 
-  { code: 10000, message: "Something went wrong," },
-
-  USER_ALREADY_EXISTS: 
-  { code: 10001, message: "User already exists." },
-
-  INVALID_PASSWORD: 
-  { code: 10002, message: "Password must be at least 8 characters long and include at least one letter and one number." },
-
-  REGISTER_FAILED: 
-  { code: 10003, message: "Create user with password failed" },
-
-  USER_NOT_FOUND: 
-  { code: 10004, message: "User not found" },
-
-  INVALID_USER: 
-  { code: 10005, message: "Invalid user data" },
-
-  PASSWORD_NOT_MATCH: 
-  { code: 10006, message: "Invalid password, please try again." },
-
-  INVALID_TOKEN: 
-  { code: 10007, message: "Invalid current token to refresh" },
-
-  USER_NOT_FOUND_IN_HEADER: 
-  { code: 10008, message: "User not found by header token" },
-  
-  PASSWORD_DUPLICATED: 
-  { code: 10009, message: "Cannot used the same password" },
-  
-  INVALID_PASSWORD: 
-  { code: 10010, message: "Invalid password" },
-
-  INVALID_OLD_PASSWORD: 
-  { code: 10011, message: "Invalid old password" },
-  
-  INVALID_PAYLOAD: 
-  { code: 10012, message: "Invalid payload" },
-
+  INVALID_RESPONSE: 10000,
+  USER_ALREADY_EXISTS: 10001,
+  INVALID_PASSWORD: 10002,
+  REGISTER_FAILED: 10003,
+  USER_NOT_FOUND: 10004,
+  INVALID_USER: 10005,
+  PASSWORD_NOT_MATCH: 10006,
+  INVALID_TOKEN: 10007,
+  USER_NOT_FOUND_IN_HEADER: 10008,
+  PASSWORD_DUPLICATED: 10009,
+  INVALID_PASSWORD: 10010,
+  INVALID_OLD_PASSWORD: 10011,
+  INVALID_PAYLOAD: 10012,
 };
