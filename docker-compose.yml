@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    # restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: my-dashboard
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+      args:
+        NODE_ENV: prod
+    container_name: backend
+    # restart: always
+    env_file:
+      - ./.env.prod
+    environment:
+      DB_MONGO_CONNECTION_STRING: mongodb://admin:root@mongo:27017
+    ports:
+      - "3010:3010"
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
