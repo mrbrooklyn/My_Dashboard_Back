@@ -16,7 +16,7 @@ COPY . .
 RUN yarn install
 
 # Copy the correct .env file based on the build argument
-COPY .env.$NODE_ENV .env
+# COPY .env.$NODE_ENV .env
 
 EXPOSE 3010
 
