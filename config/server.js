@@ -18,7 +18,7 @@ const init = async () => {
     port: process.env.PORT || 3000,
     routes: {
       cors: {
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'http://13.239.47.36'],
         headers: ['Accept', 'Content-Type', 'Authorization', 'platform', 'lang'],
         credentials: true,
       },
@@ -88,6 +88,8 @@ const init = async () => {
     return h.continue;
   });
 
+  server.realm.modifiers.route.prefix = "/api";
+  
   server.route(userRoutes);
 };
 
