@@ -18,7 +18,7 @@ const init = async () => {
     port: process.env.PORT || 3000,
     routes: {
       cors: {
-        origin: ['http://localhost:3000', 'http://13.239.47.36'],
+        origin: ['http://localhost:3000'],
         headers: ['Accept', 'Content-Type', 'Authorization', 'platform', 'lang'],
         credentials: true,
       },
